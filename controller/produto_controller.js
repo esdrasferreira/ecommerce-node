@@ -2,9 +2,9 @@ const produtoDao = require("../repositorio/produto_dao");
 const conexao = require("../util/conexao");
 const Produto = require("../model/produto");
 
-totalPorPagina = 5;
-pagina = 0;
-offset = 0;
+var totalPorPagina = 5;
+var pagina = 0;
+var offset = 0;
 
 class ProdutoController {
 	todosPaginacao = (req, res, next) => {
@@ -17,13 +17,19 @@ class ProdutoController {
 		} else {
 			totalPorPagina = parseInt(limit);
 			pagina = parseInt(page);
-			offset = totalPorPagina * (pagina - 1);
+			if (pagina > 0) {
+				offset = totalPorPagina * (pagina - 1);
+			} else {
+				pagina = 1;
+				offset = totalPorPagina * (pagina - 1);
+			}
 		}
 		let numPage = 0;
 		new produtoDao(conexao).countPages().then(result => {
 			if (result > 0) {
 				console.log("result : " + result);
 				numPage = Math.ceil(result / totalPorPagina);
+
 				console.log("numPage01 :" + numPage);
 			} else {
 				console.log("else result : " + result);
@@ -32,12 +38,34 @@ class ProdutoController {
 		});
 
 		console.log("numPage::: " + numPage);
-
+		const results = {};
 		new produtoDao(conexao)
+
 			.todosComPaginacao(totalPorPagina, offset)
 			.then(result => {
-				if (result.length === 0) res.json({ mensagem: "Não existem produtos" });
-				else res.json(result);
+				if (result.length === 0) {
+					res.json({ mensagem: "Não existem produtos" });
+				} else {
+					results.results = result;
+					results.totalDePaginas = {
+						totalOffPages: numPage
+					};
+					if (pagina < numPage) {
+						results.next = {
+							page: pagina + 1,
+							limit: totalPorPagina
+						};
+					}
+
+					if (page > 1) {
+						results.previous = {
+							page: pagina - 1,
+							limit: totalPorPagina
+						};
+					}
+
+					res.json(results);
+				}
 			})
 			.catch(next);
 	};
