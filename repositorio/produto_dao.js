@@ -13,7 +13,7 @@ class ProdutoDao {
 						return err;
 					} else {
 						rows = rows[0].numRows;
-						console.log("numero de linhas = " + rows);
+						console.log("numero de linhas produto_dao countPages() = " + rows);
 					}
 
 					resolve(rows);

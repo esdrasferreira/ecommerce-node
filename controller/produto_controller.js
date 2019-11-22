@@ -25,11 +25,12 @@ class ProdutoController {
 			}
 		}
 		let numPage = 0;
+		let rows = 0;
 		new produtoDao(conexao).countPages().then(result => {
 			if (result > 0) {
 				console.log("result : " + result);
 				numPage = Math.ceil(result / totalPorPagina);
-
+				rows = result;
 				console.log("numPage01 :" + numPage);
 			} else {
 				console.log("else result : " + result);
@@ -47,22 +48,14 @@ class ProdutoController {
 					res.json({ mensagem: "Não existem produtos" });
 				} else {
 					results.results = result;
-					results.totalDePaginas = {
-						totalOffPages: numPage
+					results.paginacao = {
+						pagina: pagina,
+						previous: pagina > 1 ? pagina - 1 : undefined,
+						next: pagina < numPage ? pagina + 1 : undefined,
+						totalOffPages: numPage,
+						limit: totalPorPagina,
+						rows: rows
 					};
-					if (pagina < numPage) {
-						results.next = {
-							page: pagina + 1,
-							limit: totalPorPagina
-						};
-					}
-
-					if (page > 1) {
-						results.previous = {
-							page: pagina - 1,
-							limit: totalPorPagina
-						};
-					}
 
 					res.json(results);
 				}

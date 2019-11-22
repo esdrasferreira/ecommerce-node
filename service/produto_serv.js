@@ -19,7 +19,7 @@ export class ProdutoServ {
 
 	takeProdutos = async () => {
 		const response = await axios.get(
-			"http://localhost:3000/api/v1/produto/todos-page?page=2&limit=6"
+			"http://localhost:3000/api/v1/produto/todos-page?page=1&limit=5"
 		);
 		console.log(response);
 		const status = response.status;
