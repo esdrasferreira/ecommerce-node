@@ -860,13 +860,13 @@
 
 			/*<--------------Inicio Monta Tela Paginação---------------------------->*/
 
-			var data2 = {};
-
 			const createUl = () => {
 				let element = document.createElement("ul");
 				element.className = "pagination justify-content-center";
 
-				element.appendChild(tableHead());
+				element.appendChild(createLi());
+				element.appendChild(createLi1());
+				element.appendChild(createLi2());
 
 				return element;
 			};
@@ -881,23 +881,44 @@
 				element.tabindex = "-1";
 				element.innerHTML = "Previous";
 
-				let element2 = document.createElement("a");
-				element2.className = "page-link";
-				element2.href = "#";
-				element2.tabindex = "-1";
-
 				elementLi.appendChild(element);
-				elementLi.appendChild(element2);
 
 				return elementLi;
+			};
+
+			const createLi1 = () => {
+				let elementLi1 = document.createElement("li");
+				elementLi1.className = "page-item";
+
+				let element = document.createElement("a");
+				element.className = "page-link";
+				element.href = "#";
+				element.innerHTML = "1";
+
+				elementLi1.appendChild(element);
+
+				return elementLi1;
+			};
+
+			const createLi2 = () => {
+				let elementLi2 = document.createElement("li");
+				elementLi2.className = "page-item";
+
+				let element = document.createElement("a");
+				element.className = "page-link";
+				element.href = "#";
+				element.tabindex = "-1";
+				element.innerHTML = "Next";
+
+				elementLi2.appendChild(element);
+
+				return elementLi2;
 			};
 
 			const appendToDOMPag = paginacao => {
 				document.getElementById("paginacao").innerHTML = "";
 				const resultado2 = document.getElementById("paginacao");
 				const ull = createUl();
-
-				ull.appendChild(createLi);
 
 				resultado2.appendChild(ull);
 			};
