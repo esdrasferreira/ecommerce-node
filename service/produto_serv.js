@@ -17,9 +17,16 @@ export class ProdutoServ {
 		}
 	};
 
-	takeProdutos = async () => {
+	takeProdutos = async (pages = 2, limits = 5) => {
+		let parametros = {
+			params: {
+				page: pages,
+				limit: limits
+			}
+		};
 		const response = await axios.get(
-			"http://localhost:3000/api/v1/produto/todos-page?page=1&limit=5"
+			"http://localhost:3000/api/v1/produto/todos-page",
+			parametros
 		);
 		console.log(response);
 		const status = response.status;

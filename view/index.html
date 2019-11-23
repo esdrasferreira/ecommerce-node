@@ -285,99 +285,9 @@
 
 			/*<--------------Inicio primeiro monta tela---------------------------->*/
 			var data = {};
-			var data2 = {};
 
 			document;
 			// window.addEventListener("load", () => montaTela());
-
-			/*<--------------Inicio Monta Tela Paginação---------------------------->*/
-
-			const createUl = pages => {
-				let element = document.createElement("ul");
-				element.className = "pagination justify-content-center";
-
-				element.appendChild(createLi());
-
-				for (let i = 0; i <= pages; i++) {
-					element.appendChild(createLi1(i));
-				}
-
-				element.appendChild(createLi2());
-
-				return element;
-			};
-
-			const createLi = () => {
-				let elementLi = document.createElement("li");
-				elementLi.className = "page-item";
-
-				let element = document.createElement("a");
-				element.className = "page-link";
-				element.href = "#";
-				element.tabindex = "-1";
-				element.innerHTML = "Previous";
-
-				elementLi.appendChild(element);
-
-				return elementLi;
-			};
-
-			const createLi1 = num => {
-				let elementLi1 = document.createElement("li");
-				elementLi1.className = "page-item";
-
-				let element = document.createElement("a");
-				element.className = "page-link";
-				element.href = num;
-				element.textContent = num;
-				element.id = `p${num}`;
-				elementLi1.addEventListener("click", () => {});
-
-				elementLi1.appendChild(element);
-
-				return elementLi1;
-			};
-
-			const createLi2 = () => {
-				let elementLi2 = document.createElement("li");
-				elementLi2.className = "page-item";
-
-				let element = document.createElement("a");
-				element.className = "page-link";
-				element.href = "#";
-				element.tabindex = "-1";
-				element.innerHTML = "Next";
-
-				elementLi2.appendChild(element);
-
-				return elementLi2;
-			};
-
-			const appendToDOMPag = paginacao => {
-				const pagination = document.getElementById("paginacao");
-
-				const ull = paginacao => {
-					createUl(paginacao);
-				};
-
-				pagination.appendChild(ull);
-			};
-
-			var montaTelaPaginacao = async () => {
-				try {
-					// let totalPaginas = new ProdutoServ();
-					// let resposta = await produto.takeProdutos();
-					// let output = resposta;
-					console.log("resposta total paginas::::::::::::::");
-
-					output = "";
-				} catch (error) {
-					document.getElementById("paginacao").innerHTML =
-						"Erro na recuperação dos total paginas";
-				}
-			};
-
-			/***********************************************  FIM montatela paginacao ***********************************************/
 
 			const createTable = () => {
 				let element = document.createElement("table");
@@ -771,7 +681,10 @@
 					let output = resposta;
 
 					console.log(
-						"resposta::::::::::::::" + resposta.data.paginacao.totalOffPages
+						"resposta.data.results || " +
+							resposta.data.results +
+							" || resposta.data.paginacao.totalOffPages || " +
+							resposta.data.paginacao.totalOffPages
 					);
 
 					if (
@@ -782,13 +695,13 @@
 						data = resposta.data.results;
 
 						appendToDOM(data);
-						//appendToDOMPag(resposta.data.paginacao.totalOffPages);
+						criaPaginacao(resposta.data.paginacao.totalOffPages);
 					} else {
 						document.getElementById("resultado").innerHTML = output;
 					}
 				} catch (error) {
 					document.getElementById("resultado").innerHTML =
-						"Erro na recuperação dos produtos";
+						"Erro na recuperação dos produtoss";
 				}
 			};
 
@@ -950,6 +863,63 @@
 				montaTelaNovoProduto();
 			});
 			/***********************************************  FIM montatela para Novos produtos ***************************************************/
+
+			/*<--------------Inicio Monta Tela Paginação---------------------------->*/
+
+			const criaPaginacao = async pages => {
+				const pagination = document.getElementById("paginacao");
+
+				const liPrev = document.createElement("li");
+				liPrev.className = "page-item";
+
+				const aPrev = document.createElement("a");
+				aPrev.className = "page-link";
+				aPrev.href = "#";
+				aPrev.textContent = "Previous";
+				liPrev.appendChild(aPrev);
+
+				const untL = document.createElement("ul");
+				untL.className = "pagination justify-content-center";
+				untL.appendChild(liPrev);
+
+				for (let num = 1; num <= pages; num++) {
+					const list = document.createElement("li");
+					list.className = "page-item";
+
+					let a = document.createElement("a");
+					a.className = "page-link";
+					a.href = "#";
+					a.textContent = num;
+					a.id = `p${num}`;
+					a.addEventListener("click", () => newPage(num));
+					list.appendChild(a);
+					untL.appendChild(list);
+				}
+
+				const liNext = document.createElement("li");
+				liNext.className = "page-item";
+
+				const aNext = document.createElement("a");
+				aNext.className = "page-link";
+				aNext.href = "#";
+				aNext.textContent = "Next";
+				liNext.appendChild(aNext);
+
+				untL.appendChild(liNext);
+
+				pagination.appendChild(untL);
+			};
+
+			const newPage = async page => {
+				let produtoServ = new ProdutoServ();
+				let resposta = await produtoServ.takeProdutos(page);
+
+				if (resposta.data.results != null && resposta.data.results.length > 0)
+					data = resposta.data.results;
+				recriateTable();
+			};
+
+			/***********************************************  FIM montatela paginacao ***********************************************/
 		</script>
 	</body>
 </html>
