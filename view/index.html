@@ -695,7 +695,11 @@
 						data = resposta.data.results;
 
 						appendToDOM(data);
-						criaPaginacao(resposta.data.paginacao.totalOffPages);
+						criaPaginacao(
+							resposta.data.paginacao.totalOffPages,
+							resposta.data.paginacao.previous,
+							resposta.data.paginacao.next
+						);
 					} else {
 						document.getElementById("resultado").innerHTML = output;
 					}
@@ -866,21 +870,36 @@
 
 			/*<--------------Inicio Monta Tela Paginação---------------------------->*/
 
-			const criaPaginacao = async pages => {
+			const criaPaginacao = async (pages, prev, next) => {
+				document.getElementById("paginacao").innerHTML = "";
 				const pagination = document.getElementById("paginacao");
-
-				const liPrev = document.createElement("li");
-				liPrev.className = "page-item";
-
-				const aPrev = document.createElement("a");
-				aPrev.className = "page-link";
-				aPrev.href = "#";
-				aPrev.textContent = "Previous";
-				liPrev.appendChild(aPrev);
+				console.log("prev || " + prev);
 
 				const untL = document.createElement("ul");
 				untL.className = "pagination justify-content-center";
-				untL.appendChild(liPrev);
+
+				const liPrev = document.createElement("li");
+				liPrev.className = "page-item";
+				const liPrevDis = document.createElement("li");
+				liPrevDis.className = "page-item disabled";
+
+				if (prev != null) {
+					const aPrev = document.createElement("a");
+					aPrev.className = "page-link";
+					aPrev.href = "#";
+					aPrev.id = `p${prev}`;
+					aPrev.textContent = "Previous";
+					aPrev.addEventListener("click", () => newPage(prev));
+					liPrev.appendChild(aPrev);
+					untL.appendChild(liPrev);
+				} else {
+					const aPrev = document.createElement("a");
+					aPrev.className = "page-link";
+					aPrev.href = "#";
+					aPrev.textContent = "Previous";
+					liPrevDis.appendChild(aPrev);
+					untL.appendChild(liPrevDis);
+				}
 
 				for (let num = 1; num <= pages; num++) {
 					const list = document.createElement("li");
@@ -899,13 +918,27 @@
 				const liNext = document.createElement("li");
 				liNext.className = "page-item";
 
-				const aNext = document.createElement("a");
-				aNext.className = "page-link";
-				aNext.href = "#";
-				aNext.textContent = "Next";
-				liNext.appendChild(aNext);
+				const liNextDis = document.createElement("li");
+				liNextDis.className = "page-item disabled";
 
-				untL.appendChild(liNext);
+				if (next != null) {
+					const aNext = document.createElement("a");
+					aNext.className = "page-link";
+					aNext.href = "#";
+					aNext.id = `p${next}`;
+					aNext.textContent = "Next";
+					aNext.addEventListener("click", () => newPage(next));
+					liNext.appendChild(aNext);
+					untL.appendChild(liNext);
+				} else {
+					const aNext = document.createElement("a");
+					aNext.className = "page-link";
+					aNext.href = "#";
+					aNext.textContent = "Next";
+					liNextDis.appendChild(aNext);
+
+					untL.appendChild(liNextDis);
+				}
 
 				pagination.appendChild(untL);
 			};
@@ -914,9 +947,15 @@
 				let produtoServ = new ProdutoServ();
 				let resposta = await produtoServ.takeProdutos(page);
 
-				if (resposta.data.results != null && resposta.data.results.length > 0)
+				if (resposta.data.results != null && resposta.data.results.length > 0) {
 					data = resposta.data.results;
-				recriateTable();
+					criaPaginacao(
+						resposta.data.paginacao.totalOffPages,
+						resposta.data.paginacao.previous,
+						resposta.data.paginacao.next
+					);
+					recriateTable();
+				}
 			};
 
 			/***********************************************  FIM montatela paginacao ***********************************************/
