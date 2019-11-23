@@ -17,7 +17,7 @@ export class ProdutoServ {
 		}
 	};
 
-	takeProdutos = async (pages = 2, limits = 5) => {
+	takeProdutos = async (pages = 1, limits = 5) => {
 		let parametros = {
 			params: {
 				page: pages,
