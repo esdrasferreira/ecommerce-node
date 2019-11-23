@@ -698,7 +698,8 @@
 						criaPaginacao(
 							resposta.data.paginacao.totalOffPages,
 							resposta.data.paginacao.previous,
-							resposta.data.paginacao.next
+							resposta.data.paginacao.next,
+							resposta.data.paginacao.pagina
 						);
 					} else {
 						document.getElementById("resultado").innerHTML = output;
@@ -870,10 +871,11 @@
 
 			/*<--------------Inicio Monta Tela Paginação---------------------------->*/
 
-			const criaPaginacao = async (pages, prev, next) => {
+			const criaPaginacao = async (pages, prev, next, pagina) => {
 				document.getElementById("paginacao").innerHTML = "";
 				const pagination = document.getElementById("paginacao");
 				console.log("prev || " + prev);
+				console.log("pagina || " + pagina);
 
 				const untL = document.createElement("ul");
 				untL.className = "pagination justify-content-center";
@@ -903,7 +905,11 @@
 
 				for (let num = 1; num <= pages; num++) {
 					const list = document.createElement("li");
-					list.className = "page-item";
+					if (pagina == num) {
+						list.className = "page-item disabled";
+					} else {
+						list.className = "page-item";
+					}
 
 					let a = document.createElement("a");
 					a.className = "page-link";
@@ -952,7 +958,8 @@
 					criaPaginacao(
 						resposta.data.paginacao.totalOffPages,
 						resposta.data.paginacao.previous,
-						resposta.data.paginacao.next
+						resposta.data.paginacao.next,
+						resposta.data.paginacao.pagina
 					);
 					recriateTable();
 				}
